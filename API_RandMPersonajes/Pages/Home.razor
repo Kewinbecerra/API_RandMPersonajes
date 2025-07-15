@@ -2,7 +2,7 @@
 @using API_RandMpersonajesBack.Models
 @using Newtonsoft.Json;
 @inject HttpClient cliente;
-
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
 <PageTitle>Home</PageTitle>
 
 <h1>Rick and Morty Characters</h1>
@@ -55,16 +55,19 @@ else
 }
 
 @code {
-	private string busqueda = "";
 	protected async Task like(Personaje personaje)
 	{
 		personaje.puntaje++;
 		personaje.likes++;
+		await localStorage.SetItemAsync($"puntaje_{personaje.id}", personaje.puntaje);
+		await localStorage.SetItemAsync($"likes_{personaje.id}", personaje.likes);
 	}
 	protected async Task dislike(Personaje personaje)
 	{
 		personaje.dislikes++;
 		personaje.puntaje--;
+		await localStorage.SetItemAsync($"puntaje_{personaje.id}", personaje.puntaje);
+		await localStorage.SetItemAsync($"dislikes_{personaje.id}", personaje.dislikes);
 	}
 	public string DebugMessage { get; set; } = "Componente inicializado";
 
@@ -73,6 +76,7 @@ else
 	protected override async Task OnInitializedAsync()
 	{
 		await GetPersonajes();
+		await cargarinfo();
 	}
 
 	private async Task GetPersonajes()
@@ -98,7 +102,21 @@ else
 			Console.WriteLine(ex.Message);
 		}
 	}
-	
+	private async Task cargarinfo()
+	{
+		foreach (var personaje in Personaje.Results)
+		{
+			string keypuntaje = $"puntaje_{personaje.id}";
+			string keyLike = $"likes_{personaje.id}";
+			string keyDislike = $"dislikes_{personaje.id}";
+			personaje.puntaje = await localStorage.GetItemAsync<int>(keypuntaje);
+			personaje.likes = await localStorage.GetItemAsync<int>(keyLike);
+			personaje.dislikes = await localStorage.GetItemAsync<int>(keyDislike);
+			
+			
+		}
+	}
+
 
 }
 

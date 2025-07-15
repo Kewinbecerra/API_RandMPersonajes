@@ -57,6 +57,7 @@ Luego, se utiliza un @foreach para recorrer los personajes y mostrarlos en tarje
 ### Funcionalidad adiccionales
 -imagenes de like y dislike
 -Puntaje visual de likes y dislikes dinamico
+-Guardado de contador de likes,dislikes y puntaje con localstorage
 ---
 ### Decisiones tecnicas
 ¿Por qué utilicé ASP.NET Core?
